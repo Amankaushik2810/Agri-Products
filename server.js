@@ -7,7 +7,6 @@ const fs = require("fs");
 const http = require("http");
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
-
 const cron = require('node-cron');
 const handleEndedAuctions = require('./utils/auctionWinnerHandler');
 
@@ -29,9 +28,29 @@ const pdfRoutes = require('./routes/pdfRoutes');
 
 const app = express();
 const server = http.createServer(app);
+
+// ✅ Allowed origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://agriproducts.netlify.app',
+];
+
+// ✅ CORS middleware for Express
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
+// ✅ CORS for Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -39,17 +58,14 @@ const io = new Server(server, {
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
 
-// Static folder
+// Static folders
 const uploadsPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) {
   fs.mkdirSync(uploadsPath);
 }
 app.use('/uploads', express.static(uploadsPath));
+app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -61,25 +77,24 @@ app.use("/api/product-bids", productBidRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/chats", chatRoutes);
 app.use('/api/pdf', pdfRoutes);
-app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
-
+// Root
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// Cron: check for ended auctions
 cron.schedule('* * * * *', async () => {
   console.log('🕐 Checking for ended auctions...');
   await handleEndedAuctions();
 });
 
-// ========== SOCKET.IO AUTH ==========
+// ✅ SOCKET.IO AUTH
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) return next(new Error("No token provided"));
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Socket Auth Decoded:", decoded);
     socket.user = decoded;
     next();
   } catch (err) {
@@ -88,7 +103,7 @@ io.use((socket, next) => {
   }
 });
 
-// ========== SOCKET.IO CONNECTION ==========
+// ✅ SOCKET.IO CONNECTION
 io.on("connection", (socket) => {
   const userId = socket.user.id || socket.user._id;
   console.log(`✅ User connected: ${userId}`);
@@ -98,7 +113,6 @@ io.on("connection", (socket) => {
     try {
       const newMessage = new Chat({ senderId, receiverId, message, timestamp: new Date() });
       await newMessage.save();
-      console.log(`📤 Message from ${senderId} to ${receiverId}`);
 
       io.to(receiverId.toString()).emit("receive_message", newMessage);
       io.to(senderId.toString()).emit("message_sent", newMessage);
@@ -112,7 +126,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ========== DB CONNECTION ==========
+// ✅ DB CONNECTION
 mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/agri-product", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -120,7 +134,7 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/agri-produc
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ========== SERVER ==========
+// ✅ START SERVER
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 Server with Socket.IO running on port ${PORT}`);
