@@ -18,8 +18,8 @@ router.post('/', verifyToken, upload.array('images'), async (req, res) => {
       location,
       type,
       startingAmount,
-      startTime,
-      endTime,
+      startTime: new Date(startTime), // Converts to UTC
+      endTime: new Date(endTime),     // Converts to UTC
       images: imagePaths,
       createdBy: req.user._id,
     });
@@ -118,9 +118,10 @@ router.put('/:id', verifyToken, upload.array('images'), async (req, res) => {
       location: req.body.location,
       type: req.body.type,
       startingAmount: req.body.startingAmount,
-      startTime: req.body.startTime,
-      endTime: req.body.endTime,
+      startTime: new Date(req.body.startTime),
+      endTime: new Date(req.body.endTime),
     };
+    
 
     if (req.files && req.files.length > 0) {
       updatedFields.images = req.files.map(file => file.filename);
