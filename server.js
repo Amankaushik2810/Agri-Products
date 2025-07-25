@@ -32,7 +32,7 @@ const server = http.createServer(app);
 // ✅ Allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://agriproducts.netlify.app',
+  'https://agri-productss.netlify.app/',
 ];
 
 // ✅ CORS middleware for Express
