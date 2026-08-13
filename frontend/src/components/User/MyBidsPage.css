@@ -1,0 +1,75 @@
+.my-bids-page {
+    padding: 40px 20px;
+    background-color: #f4fff4;
+    min-height: 100vh;
+}
+
+.my-bids-page h2 {
+    text-align: center;
+    color: #2e7d32;
+    margin-bottom: 30px;
+}
+
+.loading,
+.no-bids {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.bid-listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.bid-card {
+    background: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 128, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.bid-card:hover {
+    transform: translateY(-5px);
+}
+
+.bid-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 200px;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.bid-info {
+    padding: 15px;
+}
+
+.bid-info h3 {
+    margin-top: 0;
+    color: #2e7d32;
+}
+
+.bid-info p {
+    margin: 5px 0;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 6px 15px rgba(0, 128, 0, 0.3);
+}

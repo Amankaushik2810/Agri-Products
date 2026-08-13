@@ -1,0 +1,76 @@
+.won-land-card {
+    display: flex;
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+    background-color: #f9fff9;
+    /* Removed max-height */
+}
+
+.won-land-image-container {
+    flex: 1;
+    max-width: 40%;
+    background-color: #e8f5e9;
+    height: auto;
+    /* Allow container to expand with image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.single-land-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-height: 220px;
+    /* Ensure image fits nicely */
+    border-right: 2px solid #c8e6c9;
+}
+
+.won-land-details {
+    flex: 2;
+    padding: 15px;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.won-land-details h3 {
+    margin-bottom: 8px;
+    color: #2e7d32;
+}
+
+.won-land-details p {
+    margin: 6px 0;
+}
+
+.status-completed {
+    color: green;
+    font-weight: bold;
+}
+
+.pdf-download-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+    /* Align button to the left */
+}
+
+.pdf-download-btn:hover {
+    background-color: #388e3c;
+}
+
+.pdf-unavailable {
+    margin-top: 12px;
+    font-style: italic;
+    color: #888;
+}

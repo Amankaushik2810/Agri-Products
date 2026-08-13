@@ -1,0 +1,25 @@
+.auction-card {
+    width: 280px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.auction-card:hover {
+    transform: translateY(-5px);
+}
+
+.auction-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.auction-details {
+    padding: 1rem;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}

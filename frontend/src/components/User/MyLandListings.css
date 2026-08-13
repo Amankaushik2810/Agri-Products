@@ -1,0 +1,73 @@
+.my-land-listings {
+    padding: 2rem;
+    background: #f3fff3;
+    min-height: 100vh;
+}
+
+.my-land-listings h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2e7d32;
+    font-size: 2.2rem;
+}
+
+.loading,
+.no-listings {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.land-listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.land-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 128, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.land-card:hover {
+    transform: translateY(-6px);
+}
+
+.land-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.land-info {
+    padding: 1rem;
+    color: #333;
+}
+
+.land-info h3 {
+    color: #2e7d32;
+    margin-bottom: 0.5rem;
+}
+
+.listing-actions {
+    margin-top: 10px;
+}
+
+.listing-actions button {
+    background-color: #2d6a4f;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    margin-right: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.listing-actions button:hover {
+    background-color: #40916c;
+}

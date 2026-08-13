@@ -1,0 +1,142 @@
+/* === HEADER (Assumes separate Header.jsx uses these classes) === */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 50px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.logo span {
+  color: #000;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 15px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #2e7d32;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background-color: #2e7d32;
+  bottom: -4px;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* === MAIN PROFILE FORM === */
+.edit-profile-container {
+  max-width: 600px;
+  margin: 80px auto;
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.edit-profile-container h2 {
+  text-align: center;
+  color: #2e7d32;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.edit-profile-container p {
+  color: #d32f2f;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.edit-profile-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.edit-profile-container label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.edit-profile-container input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+}
+
+.edit-profile-container input:focus {
+  border-color: #2e7d32;
+  outline: none;
+}
+
+/* === BUTTON === */
+.edit-profile-container button {
+  background-color: #2e7d32;
+  color: #fff;
+  font-size: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-profile-container button:hover {
+  background-color: #256a28;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .edit-profile-container {
+    margin: 60px 20px;
+    padding: 25px;
+  }
+}

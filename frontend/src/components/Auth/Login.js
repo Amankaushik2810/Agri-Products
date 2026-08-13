@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from 'react-icons/fa';
@@ -6,29 +6,30 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import './Login.css';
 import agriLogo from './logo.png';
+import { AuthContext } from '../../context/AuthContext';
+import { decodeRoleFromToken, decodeIdFromToken } from '../../utils/auth';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false); // Remember Me state
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve saved login data from localStorage
     const savedEmail = localStorage.getItem('savedEmail');
     const savedPassword = localStorage.getItem('savedPassword');
     const savedRemember = localStorage.getItem('rememberMe') === 'true';
-
     if (savedEmail && savedPassword && savedRemember) {
       setFormData({ email: savedEmail, password: savedPassword });
-      setRememberMe(true); // If remember me was checked, auto-check the box
+      setRememberMe(true);
     }
   }, []);
 
-  // Validate form inputs
   const validate = () => {
     const newErrors = {};
     if (!formData.email.match(/^\S+@\S+\.\S+$/)) {
@@ -41,56 +42,91 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrors(prev => ({ ...prev, [e.target.name]: '' }));
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
+  const handleLoginSuccess = useCallback((token) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
-      const token = res.data.token;
+      const decoded = jwtDecode(token);
+      const userId = decodeIdFromToken(token);
+      // const userId = '6806fbf298e9914ea6554bf3'
+      // const userId = decoded.id || decoded._id; // Ensure correct field
+      console.log('Decoded token:', decoded);
+      // Save userId and token
+      localStorage.setItem('token', token);
+      localStorage.setItem('uId', userId);
+      console.log(localStorage.getItem('uId')); 
+      
+      login(token, rememberMe);
 
       if (rememberMe) {
-        // Save credentials to localStorage if "Remember Me" is checked
-        localStorage.setItem('token', token);
         localStorage.setItem('savedEmail', formData.email);
         localStorage.setItem('savedPassword', formData.password);
-        localStorage.setItem('rememberMe', true);
+        localStorage.setItem('rememberMe', 'true');
       } else {
-        // Use sessionStorage and clear saved credentials if "Remember Me" is not checked
-        sessionStorage.setItem('token', token);
         localStorage.removeItem('savedEmail');
         localStorage.removeItem('savedPassword');
         localStorage.removeItem('rememberMe');
       }
 
+      const role = decodeRoleFromToken(token);
       setMessage("Welcome back! Redirecting...");
-      setTimeout(() => navigate('/'), 1500);
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Something went wrong');
+      setTimeout(() => {
+        if (role === 'Admin') navigate('/admin');
+        else if (role === 'User') navigate('/user');
+        else setMessage("Login successful, but role is invalid.");
+      }, 500);
+    } catch (decodeErr) {
+      console.error('Error decoding token:', decodeErr);
+      setMessage("Failed to decode token.");
     }
-    setLoading(false);
+  }, [formData.email, formData.password, rememberMe, login, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const res = await axios.post(
+        'https://agri-products.onrender.com/api/auth/login',
+        formData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      const token = res.data.token;
+      handleLoginSuccess(token);
+    } catch (err) {
+      console.error("Login error:", err);
+      setMessage(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle Google login
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-      const decoded = jwtDecode(credentialResponse.credential);
-      const { email, name } = decoded;
+      const decodedGoogle = jwtDecode(credentialResponse?.credential);
+      const { email, name } = decodedGoogle;
 
-      const res = await axios.post('http://localhost:5000/api/auth/google-login', { email, name });
+      const res = await axios.post(
+        'https://agri-products.onrender.com/api/auth/google-login',
+        { email, name },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
       const token = res.data.token;
-
-      localStorage.setItem('token', token);
-      setMessage("Welcome back! Redirecting...");
-      setTimeout(() => navigate('/'), 1500);
+      handleLoginSuccess(token);
     } catch (err) {
-      console.error("Google login failed", err);
+      console.error("Google login failed:", err);
       setMessage("Google login failed. Try again.");
     }
   };
@@ -100,7 +136,7 @@ const Login = () => {
       <div className="login-left">
         <img src={agriLogo} alt="Agri Products Logo" className="login-logo" />
         <h1>Welcome to Agri-Products</h1>
-        <p>Real-Time Monitoring & Quality Assurance at Your Fingertips</p>
+        <p>Real-Time Bidding & Quality Assurance at Your Fingertips</p>
       </div>
 
       <div className="login-right">
@@ -114,8 +150,8 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
               placeholder=" "
+              required
             />
             <label>Email Address</label>
             {errors.email && <p className="error-text">{errors.email}</p>}
@@ -128,11 +164,14 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
               placeholder=" "
+              required
             />
             <label>Password</label>
-            <span className="toggle-eye" onClick={() => setShowPassword(!showPassword)}>
+            <span
+              className="toggle-eye"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
             {errors.password && <p className="error-text">{errors.password}</p>}
@@ -143,14 +182,20 @@ const Login = () => {
               <input
                 type="checkbox"
                 checked={rememberMe}
-                onChange={() => setRememberMe(prevState => !prevState)} // Proper state toggling
+                onChange={() => setRememberMe(prev => !prev)}
               />
               Remember Me
             </label>
-            <a href="/forgot-password" className="forgot-password">Forgot Password?</a>
+            <a href="/forgot-password" className="forgot-password">
+              Forgot Password?
+            </a>
           </div>
 
-          <button type="submit" className="login-button" disabled={loading}>
+          <button
+            type="submit"
+            className="login-button"
+            disabled={loading}
+          >
             {loading ? 'Logging in...' : 'Login'}
           </button>
 
@@ -158,7 +203,7 @@ const Login = () => {
             <p>Or sign in with Google</p>
             <GoogleLogin
               onSuccess={handleGoogleLogin}
-              onError={() => console.log("Google Login Failed")}
+              onError={() => setMessage("Google Login Failed")}
             />
           </div>
 

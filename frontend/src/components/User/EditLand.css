@@ -1,0 +1,16 @@
+.edit-land-container {
+    padding: 2rem;
+    max-width: 600px;
+    margin: auto;
+    background: #f4fff4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-land-form input,
+.edit-land-form button {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+}

@@ -1,0 +1,32 @@
+.user-homepage {
+    background-color: #f7f7f7;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Hero Gradient and Tagline */
+/* .hero-wrapper {
+    background: linear-gradient(to right, #a8e063, #ffffff);
+    padding: 60px 20px 20px;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+} */
+
+/* Auction Section */
+.auction-section {
+    padding: 40px 30px;
+    background-color: #f7f7f7;
+}
+
+/* Typography (Optional Global Style for Headings) */
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+}

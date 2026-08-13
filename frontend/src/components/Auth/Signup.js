@@ -42,7 +42,7 @@ const Signup = () => {
     if (!validate()) return;
 
     try {
-      await axios.post('http://localhost:5000/api/auth/signup', formData);
+      await axios.post('https://agri-products.onrender.com/api/auth/signup', formData);
       setMessage('Registered successfully! Redirecting...');
       setTimeout(() => navigate('/login'), 1500);
     } catch (error) {
