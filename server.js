@@ -32,7 +32,11 @@ const server = http.createServer(app);
 // ✅ Allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
+<<<<<<< HEAD
   'https://agri-productss.netlify.app',
+=======
+  'https://agriproductss.netlify.app',
+>>>>>>> 1e11b69 (updated Code)
 ];
 
 // ✅ CORS middleware for Express
@@ -85,7 +89,6 @@ app.get("/", (req, res) => {
 
 // Cron: check for ended auctions
 cron.schedule('* * * * *', async () => {
-  console.log('🕐 Checking for ended auctions...');
   await handleEndedAuctions();
 });
 
